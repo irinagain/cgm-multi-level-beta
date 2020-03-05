@@ -21,3 +21,5 @@ Synthetic continuous glucose monitoring (CGM) data and corresponding R code to f
   * **Beta_model_fit_perturb.R** - comparison of estimated quantiles between Beta model with estimated values of min/max, and Beta model with perturbed values of min/max
   
   * **Example_mfPCA_issues.R** - code for fitting multi-level fPCA model on CGM data with code for figure that highlight issues with level 1 fits
+  
+  * **FPCA_methods_comparison.R** - code for comparing different FPCA methods in terms of estimated mean and eigenfunctions for subjects' means and standard deviations
