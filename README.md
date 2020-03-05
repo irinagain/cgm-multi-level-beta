@@ -17,3 +17,5 @@ Synthetic continuous glucose monitoring (CGM) data and corresponding R code to f
   * **QQplots.R** - code for creating QQplots at a global, time-specific and subject-specific levels
   
   * **NaiveBands.R** - code for estimation of quantiles based on separate subject/time approaches (parametric Beta and nonparametric kernel density estimators)
+
+  * **Beta_model_fit_perturb.R** - comparison of estimated quantiles between Beta model with estimated values of min/max, and Beta model with perturbed values of min/max
