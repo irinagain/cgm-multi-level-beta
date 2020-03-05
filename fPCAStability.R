@@ -80,8 +80,9 @@ out_mfbeta <- estimateBetaParameters(data, minval, maxval)
 ##########################################################################################
 # Figures with overall mean and two eigenfunctions for time-varying mean and standard deviation processes
 ##########################################################################################
-time_grid_dexcom = c(0, 1:(ngrid-1) *5 /60)
 ngrid = ncol(data[[1]])
+time_grid_dexcom = c(0, 1:(ngrid-1) *5 /60)
+
 
 # Plot of means and eigenfunctions for mean process
 #########################################
