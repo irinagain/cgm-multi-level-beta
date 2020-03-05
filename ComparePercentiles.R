@@ -1,12 +1,11 @@
 # Assess model validity in estimating quantiles based on simulated data
 # ###########################################################
 # Author: Irina Gaynanova
-# Date of last update: June 10th, 2019
 
 # ATTENTION: requires real CGM data for valid comparison
 
 # Load real CGM data (how the code was used in the paper)
-load("../CGMdataReal.Rdata")
+load("CGMdataReal.Rdata")
 data = CGMdataReal
 minval = minvalReal
 maxval = maxvalReal
@@ -85,7 +84,7 @@ skew_thresh = 0.6
 averages = rowMeans(skewness)
 # Select subjects with positive skew
 selecteds = averages > skew_thresh
-sum(selecteds) # 15 subjects
+sum(selecteds) # 23 subjects
 
 # Pretty picture for 5th and 10th percentiles
 ###########################################
@@ -174,12 +173,8 @@ print(p)
 # Combine everything together for the comparative picture of 5% and 10% quantiles
 data_all <- rbind(data, data2)
 
-pdf(paste(figure.path, "Quantiles_5_10.pdf", sep = ""), onefile = TRUE, width = 14, height = 8)
-p <- ggplot(data_all, aes(x = Model, y = value, fill = Model)) + geom_boxplot() + facet_grid(percentile ~ type) + ylab("Difference in glucose values [mg / dL]") + guides(fill = FALSE) + scale_y_continuous(breaks=c(-40,-20,0,20))
+pdf(paste(figure.path, "/Quantiles_5_10.pdf", sep = ""), onefile = TRUE, width = 14, height = 8)
+p <- ggplot(data_all, aes(x = Model, y = value, fill = Model)) + geom_boxplot() + facet_grid(percentile ~ type) + ylab("Difference in glucose values [mg / dL]") + guides(fill = FALSE) + scale_y_continuous(breaks=c(-40,-20,0,20))+ theme(text = element_text(size = 18))
 print(p)
 dev.off()
 
-# Closer look at 5% quantile
-iq <- which(quantiles == 0.05)
-tmp_diff = perc_beta[iq,,] - perc_true[iq,,]
-summary(as.vector(tmp_diff)) # median=2 with IQR=3
