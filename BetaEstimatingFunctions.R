@@ -62,15 +62,16 @@ estimateBetaParameters <- function(train, minval, maxval, npc_mean = 3, npc_sd =
     # Subtract smoothed mean from raw data
     subtract_mean <- raw_dexcom - matrix(pca_means$Yhat[i,], nrow = nrow(raw_dexcom), ncol = ncol(raw_dexcom), byrow = T)
     # Estimate st.dev on the residuals
-    dexcom_sds[i, ] <- apply(subtract_mean, 2, function(x) sqrt(sum(x^2, na.rm = T)/(length(x)-1)))
+    dexcom_sds[i, ] <- apply(subtract_mean, 2, function(x) sqrt(sum(x^2, na.rm = T)/(sum(!is.na(x))-1)))
   }
+  dexcom_sds[dexcom_sds == Inf] = NA # Adjust for possibility of 1 curve for some time points which would put zero in the denominator; should really be NA there, gets corrected after smoothing
   
   # Smooth pointwise sds
   ########################################################
   ncomp = npc_sd
   pca_sds <- fpca.face(Y = dexcom_sds, center = T, argvals=(1:tdexcom)/tdexcom, knots=5, npc = ncomp)
   
-  # Perform correction for possibly negative sds due to smoothing - only happens for last 3 time points on 1 subject, doesn't affect inference on A1C
+  # Perform correction for possibly negative sds due to smoothing - doesn't happen on our data but just in case
   ########################################################
   indneg = which(pca_sds$Yhat < 0, arr.ind = T)
   if (length(indneg) > 0){
