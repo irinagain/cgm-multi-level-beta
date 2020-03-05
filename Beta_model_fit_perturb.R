@@ -9,8 +9,6 @@ rm(list=ls())
 library(tidyverse)
 library(refund)
 
-# Specify path to save results
-results.path = '~/Documents/Research/Glucometers/NightTrajectories/Data_rda/'
 
 # Load real CGM data (how the code was used in the paper)
 load("CGMdataReal.Rdata")
