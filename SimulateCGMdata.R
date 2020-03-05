@@ -1,7 +1,6 @@
 # Create synthetic CGM data by using multi-level fPCA model combined with inverse-cdf transformation to mimick marginal subject-specific distributions
 ##############################################################
 # Author: Irina Gaynanova
-# Date of last update: June 10th, 2019
 
 # NOT RUN: requires real CGM data, however the code will work with provided synthetic data
 
@@ -48,7 +47,7 @@ scores2 <- data.frame(scores = out_mfpca$scores$level2, subjects = id)
 
 scoresSummaries <- scores2%>%
   group_by(subjects)%>%
-  summarize(m1 = mean(scores.1), m2 = mean(scores.2), m3 = mean(scores.3), m4 = mean(scores.4), m5 = mean(scores.5), m6 = mean(scores.6), sd1 = sd(scores.1), sd2 = sd(scores.2), sd3 = sd(scores.3), sd4 = sd(scores.4), sd5 = sd(scores.5), sd6 = sd(scores.6))
+  summarize(m1 = mean(scores.1), m2 = mean(scores.2), m3 = mean(scores.3), m4 = mean(scores.4), m5 = mean(scores.5), m6 = mean(scores.6), m7 = mean(scores.7), sd1 = sd(scores.1), sd2 = sd(scores.2), sd3 = sd(scores.3), sd4 = sd(scores.4), sd5 = sd(scores.5), sd6 = sd(scores.6), sd7 = sd(scores.7))
 
 # Estimate marginal parameters for multi-level functional Beta model, use mean/sd for normal data generation; alpha/beta/m/M for beta data generation
 source("BetaEstimatingFunctions.R")
@@ -84,7 +83,7 @@ for (j in 1:n){
   # Draw level 2 scores using a specific number of nights
   zeta_sds <- matrix(0, nlevel2, nj)
   for (i in 1:nlevel2){
-    zeta_sds[i, ] <- rnorm(nj, mean = as.numeric(scoresSummaries[j,i + 1]), sd = as.numeric(scoresSummaries[j,i + 7])) 
+    zeta_sds[i, ] <- rnorm(nj, mean = as.numeric(scoresSummaries[j,i + 1]), sd = as.numeric(scoresSummaries[j,i + nlevel2 + 1])) 
   }
   
   # Generate nj curves strictly following mfPCA model
@@ -144,7 +143,7 @@ selectedIDs <- c(70058, 70134, 70186)
 nid <- which(subjectIDs %in% selectedIDs)
 
 # Code for figure
-pdf(paste(figure.path, "Simulated_vs_real_examples.pdf", sep = ""), onefile = TRUE, width = 14, height = 8)
+pdf(paste(figure.path, "/Simulated_vs_real_examples.pdf", sep = ""), onefile = TRUE, width = 14, height = 8)
 
 nj = 14
 plotdata <- c()
@@ -154,7 +153,7 @@ for (j in nid){
   plotdata <- rbind(plotdata, data.frame(Y = Y, day = c(rep(1:nj, tdexcom), rep(1:nj, tdexcom), rep(1:nrow(raw), tdexcom)) , time = c(rep(0:(tdexcom-1), each = nj),rep(0:(tdexcom-1), each = nj),rep(0:(tdexcom-1), each = nrow(raw))) * 5/60, type = c(rep("Normal", tdexcom*nj), rep("Beta", tdexcom*nj), rep("Real", tdexcom*nrow(raw))), subject = rep(subjectIDs[j], length(Y))))
 }
 
-p = ggplot(plotdata, aes(x = time, y = Y, group = as.factor(day))) + geom_line() + ylim(c(0,400)) + facet_grid(subject~factor(type,levels=c("Normal", "Beta", "Real"))) 
+p = ggplot(plotdata, aes(x = time, y = Y, group = as.factor(day))) + geom_line() + ylim(c(0,400)) + facet_grid(subject~factor(type,levels=c("Normal", "Beta", "Real"))) + theme(text = element_text(size = 18))
 print(p)
 
 dev.off()
