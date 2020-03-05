@@ -2,7 +2,6 @@
 # Creates figures with scores and calculates association with A1C
 ########################################################################################
 # Author: Irina Gaynanova
-# Date of last update: February 20th, 2019
 
 # ATTENTION: this code relies on actual A1C values for real CGM data, so can only be run with real data
 
