@@ -1,7 +1,6 @@
 # Investigate the stability of principal eigenfunctions/scores with respect to subjects selection
 #############################################################################################
 # Author: Irina Gaynanova
-# Date of last update: June 10th, 2019
 
 # ATTENTION: results in manucscript are based on real CGM data, however the code will work with provided synthetic data (exception: use of real subject IDs for coloring of some of the figures)
 
@@ -71,6 +70,7 @@ library(refund)
 
 # Specify path to save figures, by default use working directory
 figure.path = getwd()
+text_size = 16 # font size for plotting
 
 # Estimate marginal parameters for multi-level functional Beta model, use mean/sd for normal data generation; alpha/beta/m/M for beta data generation
 source("BetaEstimatingFunctions.R")
@@ -111,10 +111,10 @@ elabeller <- function(variable, value){
 p2 <- mean_fPCA_all %>%
   dplyr::select(-mu, -e3)%>%
   gather(key = "type", value = "value", -time)%>%
-  ggplot(aes(x = time, y = value)) + facet_grid(~type, labeller = elabeller) + geom_line()+ xlab("Hours of sleep") + ylab("")
+  ggplot(aes(x = time, y = value)) + facet_grid(~type, labeller = elabeller) + geom_line()+ xlab("Hours of sleep") + ylab("")+ theme(text = element_text(size = text_size))
 p2
 
-pdf(paste(figure.path, "MeanPCA.pdf", sep = ""), onefile = F, width = 12, height = 4)
+pdf(paste(figure.path, "/MeanPCA.pdf", sep = ""), onefile = F, width = 12, height = 4)
 multiplot(p1,p2, cols = 2)
 dev.off()
 
@@ -122,14 +122,14 @@ dev.off()
 #########################################
 # Create sd data frame
 sd_fPCA_all <- data.frame(time = time_grid_dexcom, mu = out_mfbeta$pca_sds$mu)
-sd_fPCA_all$e1 <- out_mfbeta$pca_sds$efunctions[,1]*sqrt(ngrid)
+sd_fPCA_all$e1 <- -out_mfbeta$pca_sds$efunctions[,1]*sqrt(ngrid)
 sd_fPCA_all$e2 <- out_mfbeta$pca_sds$efunctions[,2]*sqrt(ngrid)
 sd_fPCA_all$e3 <- out_mfbeta$pca_sds$efunctions[,3]*sqrt(ngrid)
 
 # Overall mean plot for sd process
 p1 <- sd_fPCA_all %>% 
   dplyr::select(time, mu) %>% 
-  ggplot(aes(x = time, y = mu)) + geom_line() + xlab("Hours of sleep") + ylab("[mg / dL]") + ggtitle("Overall glucose standard deviation")
+  ggplot(aes(x = time, y = mu)) + geom_line() + xlab("Hours of sleep") + ylab("[mg / dL]") + ggtitle("Overall glucose standard deviation")+ theme(text = element_text(size = text_size))
 p1
 
 # Helper functions to create facet labels
@@ -146,10 +146,10 @@ elabeller <- function(variable, value){
 p2 <- sd_fPCA_all %>%
   dplyr::select(-mu, -e3)%>%
   gather(key = "type", value = "value", -time)%>%
-  ggplot(aes(x = time, y = value)) + facet_grid(~type, labeller = elabeller) + geom_line()+ xlab("Hours of sleep") + ylab("")
+  ggplot(aes(x = time, y = value)) + facet_grid(~type, labeller = elabeller) + geom_line()+ xlab("Hours of sleep") + ylab("")+ theme(text = element_text(size = text_size))
 p2
 
-pdf(paste(figure.path, "SdPCA.pdf", sep = ""), onefile = F, width = 12, height = 4)
+pdf(paste(figure.path, "/SdPCA.pdf", sep = ""), onefile = F, width = 12, height = 4)
 multiplot(p1,p2, cols = 2)
 dev.off()
 
@@ -162,7 +162,7 @@ scores_means = out_mfbeta$pca_means$scores
 scores_sds = out_mfbeta$pca_sds$scores
 
 # Combine all the scores and the subject
-dexcom = data.frame(id = subjectIDs, scores_sd1 = scores_sds[,1], scores_sd2 = scores_sds[,2], scores_sd3 = scores_sds[,3], scores1 = scores_means[,1],scores2 = scores_means[,2], scores3 = scores_means[,3])
+dexcom = data.frame(id = subjectIDs, scores_sd1 = -scores_sds[,1], scores_sd2 = scores_sds[,2], scores_sd3 = scores_sds[,3], scores1 = scores_means[,1],scores2 = scores_means[,2], scores3 = scores_means[,3])
 
 # Calculate correlations between pairs of scores
 cor(dexcom$scores1, dexcom$scores_sd1) # 0.61
@@ -178,8 +178,8 @@ dexcom_selected$id <- as.factor(as.character(dexcom_selected$id))
 
 # Create a figure of pairwise scores, use different color for each subject. Only do the first 2 scores.
 pdf(paste(figure.path, "PairwiseScores_col.pdf", sep = ""), onefile = TRUE, width = 12, height = 5)
-p1 = dexcom %>% ggplot(aes(scores1, scores_sd1)) + geom_point(alpha = 0.3, size = 2) + xlab("Mean score 1") + ylab("Sd score 1") + geom_point(aes(scores1, scores_sd1, col = id), data = dexcom_selected, size = 3)+ theme(legend.position="none")
-p2 = dexcom %>% ggplot(aes(scores2, scores_sd2)) + geom_point(alpha = 0.3, size = 2) + xlab("Mean score 2") + ylab("Sd score 2") + geom_point(aes(scores2, scores_sd2, col = id), data = dexcom_selected, size = 3)+ theme(legend.position="none")
+p1 = dexcom %>% ggplot(aes(scores1, scores_sd1)) + geom_point(alpha = 0.3, size = 2) + xlab("Mean score 1") + ylab("Sd score 1") + geom_point(aes(scores1, scores_sd1, col = id), data = dexcom_selected, size = 3)+ theme(legend.position="none")+ theme(text = element_text(size = text_size))
+p2 = dexcom %>% ggplot(aes(scores2, scores_sd2)) + geom_point(alpha = 0.3, size = 2) + xlab("Mean score 2") + ylab("Sd score 2") + geom_point(aes(scores2, scores_sd2, col = id), data = dexcom_selected, size = 3)+ theme(legend.position="none")+ theme(text = element_text(size = text_size))
 multiplot(p1,p2, cols = 2)
 dev.off()
 
@@ -236,7 +236,7 @@ mean_fPCA$time <- rep(time_grid_dexcom, nrep)
 
 
 # Compare all subjects with subjects removed plot
-p1 = mean_fPCA %>% ggplot(aes(x = time, y = mu, group = nrep)) + geom_line(alpha = 0.8) + xlab("Hours of sleep") + ylab("Glucose  [mg / dL]") + ggtitle("Overall glucose mean") + geom_line(aes(x = time, y = mu), data = mean_fPCA_all, col = "red", lwd = 1.5)
+p1 = mean_fPCA %>% ggplot(aes(x = time, y = mu, group = nrep)) + geom_line(alpha = 0.8) + xlab("Hours of sleep") + ylab("Glucose  [mg / dL]") + ggtitle("Overall glucose mean") + geom_line(aes(x = time, y = mu), data = mean_fPCA_all, col = "red", lwd = 1.5)+ theme(text = element_text(size = text_size))
 p1
 
 
@@ -258,7 +258,7 @@ colnames(e1_fPCA) <- c("time", "nrep", "e1")
 e1_fPCA$time <- rep(time_grid_dexcom, nrep)
 
 p2 <- e1_fPCA %>%
-  ggplot(aes(x = time, y = e1, group = nrep)) + geom_line(alpha = 0.8)+ xlab("Hours of sleep") + ylab("") + geom_line(aes(x = time, y = e1), data = mean_fPCA_all, col = "red", lwd = 1.5)+ ylim(c(-1.7, 1.7))+ ggtitle("Mean eigenfunction 1")
+  ggplot(aes(x = time, y = e1, group = nrep)) + geom_line(alpha = 0.8)+ xlab("Hours of sleep") + ylab("") + geom_line(aes(x = time, y = e1), data = mean_fPCA_all, col = "red", lwd = 1.5)+ ylim(c(-1.7, 1.7))+ ggtitle("Mean eigenfunction 1")+ theme(text = element_text(size = text_size))
 p2
 
 ########################################
@@ -277,56 +277,11 @@ colnames(e2_fPCA) <- c("time", "nrep", "e2")
 e2_fPCA$time <- rep(time_grid_dexcom, nrep)
 
 p3 <- e2_fPCA %>%
-  ggplot(aes(x = time, y = e2, group = nrep)) + geom_line(alpha = 0.8)+ xlab("Hours of sleep") + ylab("") + geom_line(aes(x = time, y = e2), data = mean_fPCA_all, col = "red", lwd = 1.5)+ ylim(c(-1.7, 1.7))+ ggtitle("Mean eigenfunction 2")
+  ggplot(aes(x = time, y = e2, group = nrep)) + geom_line(alpha = 0.8)+ xlab("Hours of sleep") + ylab("") + geom_line(aes(x = time, y = e2), data = mean_fPCA_all, col = "red", lwd = 1.5)+ ylim(c(-1.7, 1.7))+ ggtitle("Mean eigenfunction 2")+ theme(text = element_text(size = text_size))
 p3
 
-# Multiple plot function
-#
-# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
-# - cols:   Number of columns in layout
-# - layout: A matrix specifying the layout. If present, 'cols' is ignored.
-#
-# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
-# then plot 1 will go in the upper left, 2 will go in the upper right, and
-# 3 will go all the way across the bottom.
-#
-multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
-  library(grid)
-  
-  # Make a list from the ... arguments and plotlist
-  plots <- c(list(...), plotlist)
-  
-  numPlots = length(plots)
-  
-  # If layout is NULL, then use 'cols' to determine layout
-  if (is.null(layout)) {
-    # Make the panel
-    # ncol: Number of columns of plots
-    # nrow: Number of rows needed, calculated from # of cols
-    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
-                     ncol = cols, nrow = ceiling(numPlots/cols))
-  }
-  
-  if (numPlots==1) {
-    print(plots[[1]])
-    
-  } else {
-    # Set up the page
-    grid.newpage()
-    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
-    
-    # Make each plot, in the correct location
-    for (i in 1:numPlots) {
-      # Get the i,j matrix positions of the regions that contain this subplot
-      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
-      
-      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
-                                      layout.pos.col = matchidx$col))
-    }
-  }
-}
 
-pdf(paste(figure.path, "MeanPCA_stability.pdf", sep = ""), onefile = F, width = 12, height = 4)
+pdf(paste(figure.path, "/MeanPCA_stability.pdf", sep = ""), onefile = F, width = 12, height = 4)
 multiplot(p1,p2,p3, cols = 3)
 dev.off()
 
@@ -340,7 +295,7 @@ colnames(sd_fPCA) <- c("time", "nrep", "mu")
 sd_fPCA$time <- rep(time_grid_dexcom, nrep)
 
 # Compare all subjects with subjects removed plot
-p1 = sd_fPCA %>% ggplot(aes(x = time, y = mu, group = nrep)) + geom_line(alpha = 0.8) + xlab("Hours of sleep") + ylab("Glucose  [mg / dL]") + ggtitle("Overall glucose sd") + geom_line(aes(x = time, y = mu), data = sd_fPCA_all, col = "red", lwd = 1.5)
+p1 = sd_fPCA %>% ggplot(aes(x = time, y = mu, group = nrep)) + geom_line(alpha = 0.8) + xlab("Hours of sleep") + ylab("Glucose  [mg / dL]") + ggtitle("Overall glucose sd") + geom_line(aes(x = time, y = mu), data = sd_fPCA_all, col = "red", lwd = 1.5)+ theme(text = element_text(size = text_size))
 p1
 
 # sd eigenfunctions plot, separately for each eigenfunction
@@ -360,7 +315,7 @@ colnames(e1_fPCA) <- c("time", "nrep", "e1")
 e1_fPCA$time <- rep(time_grid_dexcom, nrep)
 
 p2 <- e1_fPCA %>%
-  ggplot(aes(x = time, y = e1, group = nrep)) + geom_line(alpha = 0.8)+ xlab("Hours of sleep") + ylab("") + geom_line(aes(x = time, y = e1), data = sd_fPCA_all, col = "red", lwd = 1.5)+ ylim(c(-1.9, 1.6))+ ggtitle("Sd eigenfunction 1")
+  ggplot(aes(x = time, y = e1, group = nrep)) + geom_line(alpha = 0.8)+ xlab("Hours of sleep") + ylab("") + geom_line(aes(x = time, y = e1), data = sd_fPCA_all, col = "red", lwd = 1.5)+ ylim(c(-1.9, 1.6))+ ggtitle("Sd eigenfunction 1")+ theme(text = element_text(size = text_size))
 p2
 
 ########################################
@@ -379,10 +334,10 @@ colnames(e2_fPCA) <- c("time", "nrep", "e2")
 e2_fPCA$time <- rep(time_grid_dexcom, nrep)
 
 p3 <- e2_fPCA %>%
-  ggplot(aes(x = time, y = e2, group = nrep)) + geom_line(alpha = 0.8)+ xlab("Hours of sleep") + ylab("") + geom_line(aes(x = time, y = e2), data = sd_fPCA_all, col = "red", lwd = 1.5)+ ylim(c(-1.9, 1.6))+ ggtitle("Sd eigenfunction 2")
+  ggplot(aes(x = time, y = e2, group = nrep)) + geom_line(alpha = 0.8)+ xlab("Hours of sleep") + ylab("") + geom_line(aes(x = time, y = e2), data = sd_fPCA_all, col = "red", lwd = 1.5)+ ylim(c(-1.9, 1.6))+ ggtitle("Sd eigenfunction 2")+ theme(text = element_text(size = text_size))
 p3
 
 
-pdf(paste(figure.path, "SdPCA_Stability.pdf", sep = ""), onefile = F, width = 12, height = 4)
+pdf(paste(figure.path, "/SdPCA_Stability.pdf", sep = ""), onefile = F, width = 12, height = 4)
 multiplot(p1, p2, p3, cols = 3)
 dev.off()
