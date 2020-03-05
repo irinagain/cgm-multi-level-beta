@@ -1,5 +1,4 @@
 # Author: Irina Gaynanova
-# Date of last update: June 10th, 2019
 
 ###########################################################################
 # Supporting function for fitting Beta distribution using method of moments
@@ -30,7 +29,9 @@ getAlphaBeta <- function(xbar, sd, lower, upper){
 # train - list of length n (number of subjects), each elements is a nj (number of sleep periods) by tdexcom (number of points in 7 hour sleep period at which data are collected) matrix of sleep trajectories for corresponding subject
 # minval - length n vector with values of minimal m_i, minimal observed glucose value for subject i
 # maxval - length n vector with values of maximal M_i, maximal observed glucose value for subejct i
-estimateBetaParameters <- function(train, minval, maxval){
+# npc_mean - number of components to use for mean FPCA, default 3
+# npc_sd - number of components to use for sd FPCA, default 3
+estimateBetaParameters <- function(train, minval, maxval, npc_mean = 3, npc_sd = 3){
   # Package refund is used for functional PCA
   require(refund)
   n = length(train)
@@ -49,7 +50,7 @@ estimateBetaParameters <- function(train, minval, maxval){
 
   # Smooth pointwise means
   ##############################################
-  ncomp = 3
+  ncomp = npc_mean
   pca_means <- fpca.face(Y = raw_means, center = T, argvals=(1:tdexcom)/tdexcom, knots=5, npc = ncomp)
   
   # Calculate pointwise sds adjusting for smoothed mean
@@ -66,7 +67,7 @@ estimateBetaParameters <- function(train, minval, maxval){
   
   # Smooth pointwise sds
   ########################################################
-  ncomp = 3
+  ncomp = npc_sd
   pca_sds <- fpca.face(Y = dexcom_sds, center = T, argvals=(1:tdexcom)/tdexcom, knots=5, npc = ncomp)
   
   # Perform correction for possibly negative sds due to smoothing - only happens for last 3 time points on 1 subject, doesn't affect inference on A1C
