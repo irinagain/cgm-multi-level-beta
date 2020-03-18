@@ -89,14 +89,46 @@ sum(selecteds) # 23 subjects
 # Pretty picture for 5th and 10th percentiles
 ###########################################
 iq = which(quantiles == 0.05)
-summary(c(perc_norm[iq, selecteds,] - perc_true[iq, selecteds,])) #median = -12
-IQR(c(perc_norm[iq, selecteds,] - perc_true[iq, selecteds,])) # IQR = 13
+# Comparison with normal on skewed subjects
+summary(c(perc_norm[iq, selecteds,] - perc_true[iq, selecteds,])) #median = -9.5
+IQR(c(perc_norm[iq, selecteds,] - perc_true[iq, selecteds,])) # IQR = 8.5
+
+# Comparison with beta on skewed subjects
+summary(c(perc_beta[iq, selecteds,] - perc_true[iq, selecteds,])) #median = 0.6
+IQR(c(perc_beta[iq, selecteds,] - perc_true[iq, selecteds,])) #IQR = 3.0
 
 data_first <- data.frame(Beta = c(perc_beta[iq, selecteds,] - perc_true[iq, selecteds,]), Normal = c(perc_norm[iq, selecteds,] - perc_true[iq, selecteds,]), percentile = rep("5%", sum(selecteds)*tdexcom), type = rep(paste("Beta distribution, skewness > ", skew_thresh, sep=""), sum(selecteds)*tdexcom))
 
+# Comparison with normal on other subjects
+summary(c(perc_norm[iq, !selecteds,] - perc_true[iq, !selecteds,])) #median = -3.1
+IQR(c(perc_norm[iq, !selecteds,] - perc_true[iq, !selecteds,])) #IQR = 4.3
+
+# Comparison with beta on other subjects
+summary(c(perc_beta[iq, !selecteds,] - perc_true[iq, !selecteds,])) #median = 0.4
+IQR(c(perc_beta[iq, !selecteds,] - perc_true[iq, !selecteds,])) #IQR = 2.4
+
 data_first <- rbind(data_first, data.frame(Beta = c(perc_beta[iq, !selecteds,] - perc_true[iq, !selecteds,]), Normal = c(perc_norm[iq, !selecteds,] - perc_true[iq, !selecteds,]), percentile = rep("5%", (n-sum(selecteds))*tdexcom), type = rep(paste("Beta distribution, skewness <= ", skew_thresh, sep=""), (n-sum(selecteds))*tdexcom)))
 
+# 0.1 quantile
+################################
 iq = which(quantiles == 0.1)
+
+# Comparison with normal on skewed subjects
+summary(c(perc_norm[iq, selecteds,] - perc_true[iq, selecteds,])) #median = -3.0
+IQR(c(perc_norm[iq, selecteds,] - perc_true[iq, selecteds,])) #IQR = 3.9
+
+# Comparison with beta on skewed subjects
+summary(c(perc_beta[iq, selecteds,] - perc_true[iq, selecteds,])) #median = 0.1
+IQR(c(perc_beta[iq, selecteds,] - perc_true[iq, selecteds,])) #IQR = 3.1
+
+# Comparison with normal on other subjects
+summary(c(perc_norm[iq, !selecteds,] - perc_true[iq, !selecteds,])) #median = -0.5
+IQR(c(perc_norm[iq, !selecteds,] - perc_true[iq, !selecteds,])) #IQR = 2.0
+
+# Comparison with beta on other subjects
+summary(c(perc_beta[iq, !selecteds,] - perc_true[iq, !selecteds,])) # median = -0.3
+IQR(c(perc_beta[iq, !selecteds,] - perc_true[iq, !selecteds,])) #IQR = 2.0
+
 data_first <- rbind(data_first, data.frame(Beta = c(perc_beta[iq, selecteds,] - perc_true[iq, selecteds,]), Normal = c(perc_norm[iq, selecteds,] - perc_true[iq, selecteds,]), percentile = rep("10%", sum(selecteds)*tdexcom), type = rep(paste("Beta distribution, skewness > ", skew_thresh, sep=""), sum(selecteds)*tdexcom)))
 
 data_first <- rbind(data_first, data.frame(Beta = c(perc_beta[iq, !selecteds,] - perc_true[iq, !selecteds,]), Normal = c(perc_norm[iq, !selecteds,] - perc_true[iq, !selecteds,]), percentile = rep("10%", (n-sum(selecteds))*tdexcom), type = rep(paste("Beta distribution, skewness <= ", skew_thresh, sep=""), (n-sum(selecteds))*tdexcom)))
@@ -157,6 +189,15 @@ for (i in 1:n){
 # Create data frame for underlying normal distribution
 ###########################################
 iq = which(quantiles == 0.05)
+
+# Comparison with normal
+summary(c(perc_norm[iq, ,] - perc_true[iq, ,])) #median = 0
+IQR(c(perc_norm[iq, ,] - perc_true[iq, ,])) # almost 0
+
+# Comparison with beta
+summary(c(perc_beta[iq, ,] - perc_true[iq, ,])) #median = 2.1
+IQR(c(perc_beta[iq, ,] - perc_true[iq, ,])) # IQR = 3
+
 data_second <- data.frame(Beta = c(perc_beta[iq, ,] - perc_true[iq, ,]), Normal = c(perc_norm[iq, ,] - perc_true[iq, ,]), percentile = rep("5%", n*tdexcom), type = rep("Normal distribution", n*tdexcom))
 
 iq = which(quantiles == 0.1)
