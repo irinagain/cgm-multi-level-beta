@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -69,9 +69,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type="text/css">
 .main-container {
@@ -85,7 +83,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -96,22 +93,81 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-</script>
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
 
 <!-- code folding -->
 
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
 
 
 
@@ -126,14 +182,21 @@ $(document).ready(function () {
 
 <div id="analysis-of-cgm-night-trajectories-using-multi-level-functional-beta-model" class="section level1">
 <h1>Analysis of CGM night trajectories using multi-level functional Beta model</h1>
-<p>Synthetic continuous glucose monitoring (CGM) data and corresponding R code to fit multi-level functional Beta model.</p>
+<p>Synthetic continuous glucose monitoring (CGM) data and corresponding R code to fit multi-level functional Beta model that supports the following paper:</p>
+<p><strong>Gaynanova I</strong>, Punjabi N and Crainiceanu, C (2020+). <a href="https://doi.org/10.1093/biostatistics/kxaa023">Modeling continuous glucose monitoring (CGM) data during sleep.</a> <em>Biostatistics</em>, accepted.</p>
+<p>Description of files:</p>
 <ul>
 <li><p><strong>BetaEstimatingFunctions.R</strong> - functions for fitting multi-level functional Beta model</p></li>
-<li><p><strong>CGMdataSynthetic.Rdata</strong> - synthetic CGM data. Contains list of n=125 subjects with 14 night trajectories per subject over 5 min grid in 7 hour sleep period. Also contains minimal and maximal glucose values for each subject. The data have been generated based on real CGM data described in the paper following <strong>SimulateCGMdata.R</strong> script</p></li>
+<li><p><strong>CGMdataSynthetic.Rdata</strong> - synthetic CGM data. Contains list of n=124 subjects with 14 night trajectories per subject over 5 min grid in 7 hour sleep period. Also contains minimal and maximal glucose values for each subject. The data have been generated based on real CGM data described in the paper following <strong>SimulateCGMdata.R</strong> script</p></li>
 <li><p><strong>fPCAStability.R</strong> - code for visual display of functional PCA results for mean and standard deviation processes, as well as for evaluating stability of corresponding eigenfunctions via subsampling</p></li>
 <li><p><strong>Code_for_figures.R</strong> - code for creating figures of subject-specific night trajectories, corresponding quantile bands, and minimal/maximal glucose values</p></li>
 <li><p><strong>Code_for_A1C_analyses.R</strong> - code for the analysis of association between fPCA scores and A1C as described in the paper together with code for creating corresponding figures</p></li>
-<li><p><strong>ComaprePercentiles.R</strong> - code for comparing percentiles of functional Normal and Beta models based on simulated data</p></li>
+<li><p><strong>ComparePercentiles.R</strong> - code for comparing percentiles of functional Normal and Beta models based on simulated data</p></li>
+<li><p><strong>QQplots.R</strong> - code for creating QQplots at a global, time-specific and subject-specific levels</p></li>
+<li><p><strong>NaiveBands.R</strong> - code for estimation of quantiles based on separate subject/time approaches (parametric Beta and nonparametric kernel density estimators)</p></li>
+<li><p><strong>Beta_model_fit_perturb.R</strong> - comparison of estimated quantiles between Beta model with estimated values of min/max, and Beta model with perturbed values of min/max</p></li>
+<li><p><strong>Example_mfPCA_issues.R</strong> - code for fitting multi-level fPCA model on CGM data with code for figure that highlight issues with level 1 fits</p></li>
+<li><p><strong>FPCA_methods_comparison.R</strong> - code for comparing different FPCA methods in terms of estimated mean and eigenfunctions for subjects’ means and standard deviations</p></li>
 </ul>
 </div>
 
@@ -154,6 +217,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

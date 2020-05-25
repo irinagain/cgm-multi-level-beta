@@ -1,6 +1,11 @@
 # Analysis of CGM night trajectories using multi-level functional Beta model
 
-Synthetic continuous glucose monitoring (CGM) data and corresponding R code to fit multi-level functional Beta model.
+Synthetic continuous glucose monitoring (CGM) data and corresponding R code to fit multi-level functional Beta model that supports the following paper:
+
+**Gaynanova I**, Punjabi N and Crainiceanu, C (2020+). [Modeling continuous glucose monitoring (CGM) data during sleep.](https://doi.org/10.1093/biostatistics/kxaa023) *Biostatistics*, accepted.
+
+
+Description of files:
 
   * **BetaEstimatingFunctions.R** - functions for fitting multi-level functional Beta model
   
