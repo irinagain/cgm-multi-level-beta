@@ -13,11 +13,11 @@ maxval = maxvalReal
 subjectIDs = idsReal
 
 # In absence of real CGM data, the code below will work with provided synthetic data
-# load("CGMdataSynthetic.Rdata")
-# data = simul_beta_real
-# minval = minvalSythetic
-# maxval = maxvalSynthetic
-# subjectIDs = idsSynthetic
+load("CGMdataSynthetic.Rdata")
+data = simul_beta_real
+minval = minvalSynthetic
+maxval = maxvalSynthetic
+subjectIDs = idsSynthetic
 
 library(tidyverse)
 library(refund)
